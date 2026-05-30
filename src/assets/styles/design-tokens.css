@@ -1,0 +1,43 @@
+:root {
+  --bg-main: #060608;
+  --bg-card: #0F0F12;
+  --bg-elevated: #16161C;
+  --text-main: #FFFFFF;
+  --text-muted: #8E8E9F;
+  --accent-red: #FF1A53;        /* Carmesí Eléctrico Neón */
+  --accent-yellow: #DFFF00;     /* Amarillo Lima Ácido */
+  --accent-blue: #00F0FF;       /* Turquesa Neón */
+  --accent-orange: #FF5E00;     /* Naranja Strava Eléctrico */
+  --accent-strava: #FF5700;     
+  
+  --font-base: 'Inter', sans-serif;
+  --font-metrics: 'Montserrat', sans-serif;
+  
+  /* Futuristic Gradient Pack */
+  --gradient-cyber: linear-gradient(135deg, #FF1A53 0%, #DFFF00 100%);
+  --gradient-strava: linear-gradient(135deg, #FF5E00 0%, #FF1A53 100%);
+  --gradient-neon: linear-gradient(135deg, #DFFF00 0%, #00F0FF 100%);
+  --gradient-dark: linear-gradient(180deg, rgba(22, 22, 28, 0.6) 0%, rgba(15, 15, 18, 0.95) 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+
+  /* Premium Glassmorphism system */
+  --glass-bg: rgba(15, 15, 18, 0.72);
+  --glass-bg-hover: rgba(22, 22, 28, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-border-hover: rgba(255, 255, 255, 0.12);
+  --glass-border-glow: rgba(255, 94, 0, 0.2);
+  --glass-blur: 16px;
+
+  /* High-fidelity Neon Glow shadows */
+  --glow-red: 0 0 25px rgba(255, 26, 83, 0.4);
+  --glow-orange: 0 0 25px rgba(255, 94, 0, 0.4);
+  --glow-yellow: 0 0 25px rgba(223, 255, 0, 0.45);
+  --glow-blue: 0 0 25px rgba(0, 240, 255, 0.45);
+  --glow-subtle: 0 8px 32px rgba(0, 0, 0, 0.5);
+  
+  /* HSL Values for dynamic transparency shifts */
+  --hsl-red: 344, 100%, 55%;
+  --hsl-yellow: 69, 100%, 50%;
+  --hsl-blue: 184, 100%, 50%;
+  --hsl-orange: 22, 100%, 50%;
+}

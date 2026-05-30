@@ -1,0 +1,53 @@
+.progress-container {
+  padding: 24px;
+}
+
+.progress-header h1 {
+  font-family: var(--font-metrics);
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.progress-header p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 0;
+  margin-bottom: 24px;
+}
+
+.chart-card {
+  background-color: var(--bg-card);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border-left: 4px solid var(--accent-red);
+}
+
+.chart-card h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+}
+
+.alert-box {
+  background-color: rgba(220, 38, 38, 0.1);
+  border-left: 4px solid var(--accent-yellow);
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.alert-box h4 {
+  margin: 0 0 8px 0;
+  color: var(--accent-yellow);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.alert-box p {
+  margin: 0;
+  font-size: 13px;
+  color: #ddd;
+  line-height: 1.5;
+}

@@ -1,0 +1,100 @@
+.nutrition-container {
+  padding: 24px;
+}
+
+.nutrition-container h1 {
+  font-family: var(--font-metrics);
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.nutrition-desc {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.macro-board {
+  background-color: var(--bg-card);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.macro-box {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-elevated);
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.macro-box .label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.macro-box .val {
+  font-family: var(--font-metrics);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.val.protein { color: var(--accent-red); }
+.val.carbs { color: var(--accent-blue); }
+.val.fats { color: var(--accent-orange); }
+
+.meal-section {
+  margin-top: 32px;
+}
+
+.meal-section h3 {
+  font-size: 18px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meal-card {
+  background-color: var(--bg-card);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-left: 4px solid #333;
+}
+
+.meal-card.pre { border-left-color: var(--accent-yellow); }
+.meal-card.post { border-left-color: var(--accent-red); }
+
+.meal-card h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+.meal-card p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.meal-ingredients {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ingredient-tag {
+  background-color: var(--bg-elevated);
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 12px;
+  color: #ddd;
+}

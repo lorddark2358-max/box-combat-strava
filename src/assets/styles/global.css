@@ -1,0 +1,313 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:ital,wght@0,700;0,800;0,900;1,700&display=swap');
+@import './design-tokens.css';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+body {
+  background-color: #030303;
+  color: var(--text-main);
+  font-family: var(--font-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Scrollbar Custom */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-strava);
+}
+
+/* App Layout - Simulación de Teléfono Premium */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
+  background-color: var(--bg-main);
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.85);
+}
+
+.main-content {
+  flex-grow: 1;
+  padding-bottom: 95px; /* espacio para la barra inferior más alta */
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* Estilos de Contenedores y Títulos Generales */
+h1, h2, h3, h4 {
+  font-family: var(--font-metrics);
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #FFF 40%, var(--accent-strava) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #FFF;
+  margin-bottom: 16px;
+  border-left: 3px solid var(--accent-red);
+  padding-left: 10px;
+}
+
+/* Glassmorphism Cards */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1.5px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: var(--glow-subtle);
+  transition: transform 0.35s cubic-bezier(0.165, 0.84, 0.44, 1), 
+              box-shadow 0.35s cubic-bezier(0.165, 0.84, 0.44, 1), 
+              border-color 0.3s ease,
+              background-color 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-hover);
+  transform: translateY(-5px) scale(1.015);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65), 0 0 15px rgba(255, 255, 255, 0.05);
+}
+
+/* Glass Card Decorative Cyber Corner (Futuristic touch) */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 12px 12px 0;
+  border-color: transparent var(--glass-border) transparent transparent;
+  transition: border-color 0.3s ease;
+}
+
+.glass-card:hover::before {
+  border-color: transparent rgba(255, 255, 255, 0.25) transparent transparent;
+}
+
+/* Bottom Nav Glassmorphic Estilo Strava */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: rgba(11, 11, 12, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding: 10px 0 24px 0;
+  z-index: 1000;
+  height: 85px;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-base);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  width: 65px;
+  height: 48px;
+  justify-content: center;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.nav-item:hover {
+  color: #FFF;
+  transform: translateY(-2px);
+}
+
+.nav-item.active {
+  color: var(--accent-strava);
+}
+
+.nav-icon {
+  font-size: 20px;
+  transition: transform 0.2s;
+}
+
+.nav-item:hover .nav-icon {
+  transform: scale(1.15);
+}
+
+/* El Gran Botón de Grabación Central (Orange Glow) */
+.record-nav-container {
+  position: relative;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.record-btn-pulsing-glow {
+  position: absolute;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background-color: var(--accent-strava);
+  opacity: 0.35;
+  animation: pulse-orange 2s infinite ease-in-out;
+  z-index: 1;
+}
+
+.nav-item-record {
+  position: relative;
+  background: linear-gradient(135deg, var(--accent-strava) 0%, #D93800 100%);
+  border: 4px solid var(--bg-main);
+  color: #FFF !important;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  box-shadow: var(--glow-orange);
+  transform: translateY(-16px);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+}
+
+.nav-item-record:hover {
+  transform: translateY(-20px) scale(1.05);
+  box-shadow: 0 0 30px rgba(255, 87, 0, 0.8);
+}
+
+.nav-item-record.active {
+  background: linear-gradient(135deg, var(--accent-red) 0%, #B91C1C 100%);
+  box-shadow: var(--glow-red);
+}
+
+.nav-item-record .nav-icon {
+  font-size: 24px;
+}
+
+/* Cyberpunk Utility Classes & Glows */
+.glow-text-red {
+  text-shadow: 0 0 10px rgba(255, 26, 83, 0.6);
+}
+.glow-text-yellow {
+  text-shadow: 0 0 10px rgba(223, 255, 0, 0.7);
+}
+.glow-text-blue {
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+}
+
+.glow-border-red {
+  border-color: var(--accent-red) !important;
+  box-shadow: var(--glow-red) !important;
+}
+.glow-border-yellow {
+  border-color: var(--accent-yellow) !important;
+  box-shadow: var(--glow-yellow) !important;
+}
+.glow-border-blue {
+  border-color: var(--accent-blue) !important;
+  box-shadow: var(--glow-blue) !important;
+}
+
+.btn-cyber-primary {
+  background: var(--gradient-cyber);
+  color: #000;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 20px;
+  cursor: pointer;
+  box-shadow: var(--glow-yellow);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
+}
+
+.btn-cyber-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 30px rgba(223, 255, 0, 0.7);
+}
+
+.btn-cyber-primary:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+/* Animations */
+@keyframes pulse-orange {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
+  70% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes cyber-scan {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 0% 100%;
+  }
+}
+
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    opacity: 1;
+  }
+  20%, 24%, 55% {
+    opacity: 0.7;
+  }
+}
+
+.flicker-animation {
+  animation: neon-flicker 4s infinite alternate;
+}
