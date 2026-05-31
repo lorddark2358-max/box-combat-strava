@@ -1,5 +1,5 @@
 // Coloca aquí la URL de tu servidor Express desplegado en la nube (ej: Render, Railway, Fly.io, etc.)
-export const PRODUCTION_API_URL = 'https://combat-strava-backend.onrender.com';
+export const PRODUCTION_API_URL = 'https://box-combat-strava.vercel.app';
 
 const getBackendUrl = () => {
   const hostname = window.location.hostname;

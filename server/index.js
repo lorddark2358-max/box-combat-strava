@@ -3,8 +3,6 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
-const sqlite3 = require('sqlite3');
-const { open } = require('sqlite');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -98,6 +96,8 @@ async function initDb() {
     db = new TursoAdapter(tursoUrl, tursoToken);
   } else {
     console.log('Conectando a base de datos SQLite local...');
+    const sqlite3 = require('sqlite3');
+    const { open } = require('sqlite');
     db = await open({
       filename: path.join(__dirname, 'database.db'),
       driver: sqlite3.Database
@@ -485,6 +485,22 @@ async function evaluateUserStreak(userEmail) {
     console.error('Error al evaluar racha:', err);
   }
 }
+
+// Inicialización diferida de la base de datos con promesa para asegurar consistencia
+const dbPromise = initDb().catch(err => {
+  console.error('Error al inicializar la base de datos:', err);
+  throw err;
+});
+
+// Middleware para asegurar que la base de datos está inicializada antes de procesar peticiones
+app.use(async (req, res, next) => {
+  try {
+    await dbPromise;
+    next();
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'La base de datos no se pudo inicializar: ' + err.message });
+  }
+});
 
 // --- RUTAS DE API ---
 
@@ -903,11 +919,14 @@ app.post('/api/admin/config', async (req, res) => {
   }
 });
 
-// Iniciar servidor tras conectar SQLite
-initDb().then(() => {
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Backend de Combat Strava corriendo en http://0.0.0.0:${PORT}`);
+// Exportar app para serverless (Vercel)
+module.exports = app;
+
+// Iniciar servidor local solo si se ejecuta directamente (desarrollo local)
+if (require.main === module) {
+  dbPromise.then(() => {
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Backend de Combat Strava corriendo en http://0.0.0.0:${PORT}`);
+    });
   });
-}).catch(err => {
-  console.error('Error al inicializar la base de datos', err);
-});
+}
