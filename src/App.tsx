@@ -183,7 +183,15 @@ function App() {
         </div>
 
         {/* Muestra pestaña de Dieta solo si el Administrador la tiene activa en el servidor */}
-        {adminConfig.showNutrition && (\n          <button \n            className={`nav-item ${activeTab === 'nutrition' ? 'active' : ''}`}\n            onClick={() => setActiveTab('nutrition')}\n          >\n            <span className="nav-icon">🥩</span>\n            <span>Dieta</span>\n          </button>\n        )}
+        {adminConfig.showNutrition && (
+          <button 
+            className={`nav-item ${activeTab === 'nutrition' ? 'active' : ''}`}
+            onClick={() => setActiveTab('nutrition')}
+          >
+            <span className="nav-icon">🥩</span>
+            <span>Dieta</span>
+          </button>
+        )}
         
         <button 
           className={`nav-item ${activeTab === 'social' ? 'active' : ''}`}
