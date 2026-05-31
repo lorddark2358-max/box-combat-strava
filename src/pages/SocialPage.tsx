@@ -603,7 +603,7 @@ export default function SocialPage() {
           }}>
             <h3 style={{ fontSize: '16px', color: 'white', marginBottom: '6px' }}>🔗 Compartir Sparring Reel</h3>
             <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '20px' }}>
-              Elige tu red social o copia el enlace de tu sesión de {sharingItem.activity.type}.
+               Elige tu red social o copia el enlace de tu sesión de {sharingItem.activity.type}.
             </p>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginBottom: '20px' }}>
@@ -615,7 +615,7 @@ export default function SocialPage() {
                 style={{
                   padding: '12px', borderRadius: '10px', backgroundColor: 'rgba(34, 197, 94, 0.1)',
                   border: '1px solid #22c55e', color: 'white', fontSize: '11px', fontWeight: 'bold',
-                  textDecoration: 'none', display: 'flex', alignItems: 'center', justifycontent: 'center', gap: '6px'
+                  textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
                 }}
               >
                 <span>🟢</span> WhatsApp
@@ -629,7 +629,7 @@ export default function SocialPage() {
                 style={{
                   padding: '12px', borderRadius: '10px', backgroundColor: 'rgba(56, 189, 248, 0.1)',
                   border: '1px solid #0ea5e9', color: 'white', fontSize: '11px', fontWeight: 'bold',
-                  textDecoration: 'none', display: 'flex', alignItems: 'center', justifycontent: 'center', gap: '8px'
+                  textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
                 }}
               >
                 <span>🔵</span> Telegram
@@ -643,7 +643,7 @@ export default function SocialPage() {
                 style={{
                   padding: '12px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.05)',
                   border: '1px solid rgba(255,255,255,0.2)', color: 'white', fontSize: '11px', fontWeight: 'bold',
-                  textDecoration: 'none', display: 'flex', alignItems: 'center', justifycontent: 'center', gap: '8px'
+                  textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
                 }}
               >
                 <span>⚫</span> Twitter / X
@@ -657,7 +657,7 @@ export default function SocialPage() {
                 style={{
                   padding: '12px', borderRadius: '10px', backgroundColor: 'rgba(59, 89, 152, 0.1)',
                   border: '1px solid #3b5998', color: 'white', fontSize: '11px', fontWeight: 'bold',
-                  textDecoration: 'none', display: 'flex', alignItems: 'center', justifycontent: 'center', gap: '8px'
+                  textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
                 }}
               >
                 <span>🔵</span> Facebook

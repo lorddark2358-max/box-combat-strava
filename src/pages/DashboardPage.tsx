@@ -381,7 +381,7 @@ export default function DashboardPage() {
 
                   {/* Contenido descriptivo */}
                   <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', justifycontent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <h4 style={{ fontSize: '13px', fontWeight: '900', color: '#FFF', margin: 0 }}>
                         {title}
                       </h4>
