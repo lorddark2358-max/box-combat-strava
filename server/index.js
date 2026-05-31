@@ -13,36 +13,96 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Crear carpeta uploads para guardar videos de Reels
+// Crear carpeta uploads para guardar videos de Reels (con manejo defensivo en serverless)
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
-if (!fs.existsSync(UPLOADS_DIR)) {
-  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+try {
+  if (!fs.existsSync(UPLOADS_DIR)) {
+    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+  }
+} catch (e) {
+  console.log('Aviso: No se pudo crear la carpeta local uploads (Entorno Serverless/Solo Lectura)');
 }
 
 // Servir la carpeta de videos estáticamente
 app.use('/uploads', express.static(UPLOADS_DIR));
 
-// Configuración de Multer para la subida de reels
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, UPLOADS_DIR);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname) || '.mp4';
-    cb(null, 'reel-' + uniqueSuffix + ext);
-  }
-});
+// Configuración de Multer para la subida de reels en memoria
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 let db;
 
-// --- INICIALIZAR Y SEMBRAR LA BASE DE DATOS SQLITE ---
+// Adaptador para Turso (libSQL) que emula la interfaz del driver 'sqlite' nativo
+class TursoAdapter {
+  constructor(url, token) {
+    const { createClient } = require('@libsql/client');
+    this.client = createClient({
+      url: url,
+      authToken: token
+    });
+  }
+
+  // Ejecuta scripts SQL de inicialización o migraciones múltiples
+  async exec(sql) {
+    const statements = sql
+      .split(';')
+      .map(s => s.trim())
+      .filter(s => s.length > 0);
+    for (const stmt of statements) {
+      await this.client.execute(stmt);
+    }
+  }
+
+  // Obtiene una sola fila y la retorna como objeto
+  async get(sql, params = []) {
+    const res = await this.client.execute({ sql, args: params });
+    if (res.rows && res.rows.length > 0) {
+      return this._rowToObject(res.columns, res.rows[0]);
+    }
+    return undefined;
+  }
+
+  // Obtiene todas las filas coincidentes como un arreglo de objetos
+  async all(sql, params = []) {
+    const res = await this.client.execute({ sql, args: params });
+    return res.rows.map(row => this._rowToObject(res.columns, row));
+  }
+
+  // Ejecuta una operación de escritura (INSERT, UPDATE, DELETE)
+  async run(sql, params = []) {
+    const res = await this.client.execute({ sql, args: params });
+    return {
+      lastID: res.lastInsertRowid ? res.lastInsertRowid.toString() : null,
+      changes: res.rowsAffected
+    };
+  }
+
+  // Helper para mapear fila de Turso (arreglo) a un objeto clave-valor estándar
+  _rowToObject(columns, row) {
+    if (!row) return null;
+    const obj = {};
+    columns.forEach((col, idx) => {
+      obj[col] = row[idx];
+    });
+    return obj;
+  }
+}
+
+// --- INICIALIZAR Y SEMBRAR LA BASE DE DATOS ---
 async function initDb() {
-  db = await open({
-    filename: path.join(__dirname, 'database.db'),
-    driver: sqlite3.Database
-  });
+  const tursoUrl = process.env.TURSO_DATABASE_URL;
+  const tursoToken = process.env.TURSO_AUTH_TOKEN;
+
+  if (tursoUrl && tursoToken) {
+    console.log('Conectando a base de datos serverless de Turso...');
+    db = new TursoAdapter(tursoUrl, tursoToken);
+  } else {
+    console.log('Conectando a base de datos SQLite local...');
+    db = await open({
+      filename: path.join(__dirname, 'database.db'),
+      driver: sqlite3.Database
+    });
+  }
 
   // 1. Tabla de Usuarios (con soporte antropométrico, de racha y gimnasio)
   await db.exec(`
@@ -231,7 +291,9 @@ async function initDb() {
         'Boxing', 
         '2026-05-27T08:30:00Z', 
         60, 
-        780, \n        'Alta', \n        'Puliendo la velocidad y el cabeceo. No hay descanso, nos preparamos para defender la corona.', 
+        780, 
+        'Alta', 
+        'Puliendo la velocidad y el cabeceo. No hay descanso, nos preparamos para defender la corona.', 
         12, 
         3, 
         NULL, 
@@ -371,7 +433,13 @@ async function evaluateAchievements(userEmail) {
   const sevenDaysAgoStr = sevenDaysAgo.toISOString();
 
   const bjjCountRow = await db.get(`
-    SELECT COUNT(*) as cnt \n    FROM activities \n    WHERE type = 'BJJ' \n      AND videoUrl IS NOT NULL \n      AND date >= ?\n      AND (athleteName = ? OR athleteName = 'Tú (Atleta)' OR athleteName = 'user')\n  `, [sevenDaysAgoStr, athletePrefix]);
+    SELECT COUNT(*) as cnt 
+    FROM activities 
+    WHERE type = 'BJJ' 
+      AND videoUrl IS NOT NULL 
+      AND date >= ?
+      AND (athleteName = ? OR athleteName = 'Tú (Atleta)' OR athleteName = 'user')
+  `, [sevenDaysAgoStr, athletePrefix]);
 
   const bjjCount = bjjCountRow ? (bjjCountRow.cnt || 0) : 0;
   await db.run(`
@@ -649,7 +717,52 @@ app.post('/api/activities', upload.single('video'), async (req, res) => {
 
   let videoUrl = null;
   if (req.file) {
-    videoUrl = `/uploads/${req.file.filename}`;}
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_KEY;
+
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const ext = path.extname(req.file.originalname) || '.mp4';
+    const filename = 'reel-' + uniqueSuffix + ext;
+
+    if (supabaseUrl && supabaseKey) {
+      try {
+        console.log('Subiendo video a Supabase Storage...');
+        const { createClient } = require('@supabase/supabase-js');
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        
+        const { data, error } = await supabase.storage
+          .from('reels')
+          .upload(filename, req.file.buffer, {
+            contentType: req.file.mimetype || 'video/mp4',
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (error) {
+          throw error;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('reels')
+          .getPublicUrl(filename);
+
+        videoUrl = publicUrl;
+        console.log('Video subido exitosamente a Supabase. URL:', videoUrl);
+      } catch (err) {
+        console.error('Error al subir a Supabase, cayendo a almacenamiento local en disco:', err);
+        // Fallback local
+        const filePath = path.join(UPLOADS_DIR, filename);
+        fs.writeFileSync(filePath, req.file.buffer);
+        videoUrl = `/uploads/${filename}`;
+      }
+    } else {
+      // Desarrollo local
+      console.log('Guardando video en disco local...');
+      const filePath = path.join(UPLOADS_DIR, filename);
+      fs.writeFileSync(filePath, req.file.buffer);
+      videoUrl = `/uploads/${filename}`;
+    }
+  }
 
   try {
     await db.run(`
