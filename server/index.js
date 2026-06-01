@@ -96,12 +96,16 @@ async function initDb() {
     db = new TursoAdapter(tursoUrl, tursoToken);
   } else {
     console.log('Conectando a base de datos SQLite local...');
-    const sqlite3 = require('sqlite3');
-    const { open } = require('sqlite');
-    db = await open({
-      filename: path.join(__dirname, 'database.db'),
-      driver: sqlite3.Database
-    });
+    try {
+      const sqlite3 = require('sqlite3');
+      const { open } = require('sqlite');
+      db = await open({
+        filename: path.join(__dirname, 'database.db'),
+        driver: sqlite3.Database
+      });
+    } catch (err) {
+      throw new Error('SQLite local no está disponible en este entorno (Serverless). Asegúrate de configurar las variables de entorno de producción de Turso (TURSO_DATABASE_URL y TURSO_AUTH_TOKEN) en tu panel de Vercel para activar la base de datos distribuida en la nube.');
+    }
   }
 
   // 1. Tabla de Usuarios (con soporte antropométrico, de racha y gimnasio)
@@ -486,14 +490,23 @@ async function evaluateUserStreak(userEmail) {
   }
 }
 
-// Inicialización diferida de la base de datos con promesa para asegurar consistencia
+// Inicialización de la base de datos de forma diferida con promesa para asegurar consistencia
+let dbInitError = null;
 const dbPromise = initDb().catch(err => {
-  console.error('Error al inicializar la base de datos:', err);
-  throw err;
+  console.error('Error crítico al inicializar la base de datos:', err);
+  dbInitError = err;
 });
 
 // Middleware para asegurar que la base de datos está inicializada antes de procesar peticiones
 app.use(async (req, res, next) => {
+  if (dbInitError) {
+    return res.status(500).json({
+      success: false,
+      message: 'La base de datos de producción no se pudo inicializar.',
+      error: dbInitError.message,
+      suggestion: 'Asegúrate de configurar las variables de entorno de producción de Turso (TURSO_DATABASE_URL y TURSO_AUTH_TOKEN) en tu panel de Vercel para activar la base de datos en la nube. SQLite local no está disponible en Vercel Serverless.'
+    });
+  }
   try {
     await dbPromise;
     next();
@@ -581,7 +594,7 @@ app.post('/api/auth/register', async (req, res) => {
 // Obtener todos los gimnasios
 app.get('/api/gyms', async (req, res) => {
   try {
-    const gyms = await db.all('SELECT * FROM gyms ORDER BY name ASC');
+    const gyms = await db.all('SELECT * gyms ORDER BY name ASC');
     res.json(gyms);
   } catch (e) {
     res.status(500).json({ message: e.message });
