@@ -14,7 +14,7 @@ const getBackendUrl = () => {
   // 2. Si está en un celular físico compilado nativamente (Capacitor sirve en http://localhost sin puerto)
   if (hostname === 'localhost' && port === '') {
     // CAMBIA ESTO A 'false' si quieres que la app instalada en tu celular apunte a la nube en vez del PC
-    const USE_LOCAL_DEV_SERVER = true; 
+    const USE_LOCAL_DEV_SERVER = false; 
     
     if (USE_LOCAL_DEV_SERVER) {
       console.log('📱 App Nativa: Apuntando a Servidor Local del PC de desarrollo...');

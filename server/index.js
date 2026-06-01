@@ -374,7 +374,7 @@ async function evaluateAchievements(userEmail) {
   for (const achId of achievements) {
     const exists = await db.get('SELECT * FROM user_achievements WHERE userEmail = ? AND achievementId = ?', [userEmail, achId]);
     if (!exists) {
-      await db.run('INSERT INTO user_achievements (userEmail, achievementId, unlocked, unlockedAt, progress, target) VALUES (?, ?, 0, NULL, 0, ?)', [
+      await db.run('INSERT OR IGNORE INTO user_achievements (userEmail, achievementId, unlocked, unlockedAt, progress, target) VALUES (?, ?, 0, NULL, 0, ?)', [
         userEmail, achId, targets[achId]
       ]);
     }
