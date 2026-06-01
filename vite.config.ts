@@ -6,4 +6,27 @@ export default defineConfig({
   plugins: [
     react()
   ],
+  build: {
+    chunkSizeWarningLimit: 1000,
+    // Configuración nativa moderna para Rolldown con separación de vendor
+    rolldownOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        }
+      }
+    },
+    // Compatibilidad y fallback clásico para Rollup
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        },
+      },
+    },
+  },
 })
